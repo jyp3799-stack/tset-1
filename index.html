@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Clock</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 35px;
+      font-size: 42px;
+    }
+
+    .clock-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .clock-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(12px);
+      transition: transform 0.2s ease;
+    }
+
+    .clock-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .city {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .time {
+      font-size: 48px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .date {
+      font-size: 17px;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .timezone {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 700px) {
+      .clock-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      .time {
+        font-size: 40px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>🌍 World Clock</h1>
+
+    <div class="clock-grid">
+
+      <div class="clock-card">
+        <div class="city">🇰🇷 서울</div>
+        <div class="time" id="seoul-time">--:--:--</div>
+        <div class="date" id="seoul-date"></div>
+        <div class="timezone">Asia/Seoul</div>
+      </div>
+
+      <div class="clock-card">
+        <div class="city">🇺🇸 Los Angeles</div>
+        <div class="time" id="la-time">--:--:--</div>
+        <div class="date" id="la-date"></div>
+        <div class="timezone">America/Los_Angeles</div>
+      </div>
+
+      <div class="clock-card">
+        <div class="city">🇬🇧 London</div>
+        <div class="time" id="london-time">--:--:--</div>
+        <div class="date" id="london-date"></div>
+        <div class="timezone">Europe/London</div>
+      </div>
+
+      <div class="clock-card">
+        <div class="city">🇮🇹 Rome</div>
+        <div class="time" id="rome-time">--:--:--</div>
+        <div class="date" id="rome-date"></div>
+        <div class="timezone">Europe/Rome</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const cities = [
+      {
+        id: "seoul",
+        timezone: "Asia/Seoul",
+        locale: "ko-KR"
+      },
+      {
+        id: "la",
+        timezone: "America/Los_Angeles",
+        locale: "en-US"
+      },
+      {
+        id: "london",
+        timezone: "Europe/London",
+        locale: "en-GB"
+      },
+      {
+        id: "rome",
+        timezone: "Europe/Rome",
+        locale: "it-IT"
+      }
+    ];
+
+    function updateClocks() {
+      const now = new Date();
+
+      cities.forEach(city => {
+
+        const time = new Intl.DateTimeFormat(city.locale, {
+          timeZone: city.timezone,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false
+        }).format(now);
+
+        const date = new Intl.DateTimeFormat(city.locale, {
+          timeZone: city.timezone,
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "long"
+        }).format(now);
+
+        document.getElementById(`${city.id}-time`).textContent = time;
+        document.getElementById(`${city.id}-date`).textContent = date;
+      });
+    }
+
+    updateClocks();
+
+    setInterval(updateClocks, 1000);
+  </script>
+
+</body>
+</html>
