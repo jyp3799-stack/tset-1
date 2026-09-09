@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>단위 변환기</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      background: #ffffff;
+      color: #202124;
+    }
+
+    .converter {
+      width: 100%;
+      max-width: 650px;
+      margin: 0 auto;
+      border: 1px solid #dadce0;
+      border-radius: 10px;
+      padding: 18px 16px 22px;
+      background: white;
+    }
+
+    .category-select {
+      width: 72%;
+      height: 42px;
+      padding: 0 10px;
+      font-size: 16px;
+      border: 1px solid #dadce0;
+      background: #f8f9fa;
+      color: #202124;
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    .conversion-row {
+      display: grid;
+      grid-template-columns: 1fr 28px 1fr;
+      align-items: center;
+      gap: 0;
+    }
+
+    .unit-box {
+      border: 1px solid #dadce0;
+      border-radius: 3px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .value-input {
+      width: 100%;
+      height: 58px;
+      border: none;
+      outline: none;
+      text-align: center;
+      font-size: 25px;
+      color: #000;
+      background: #fff;
+    }
+
+    .unit-select {
+      width: 100%;
+      height: 36px;
+      border: none;
+      border-top: 1px solid #dadce0;
+      padding: 0 7px;
+      font-size: 14px;
+      background: #f1f3f4;
+      outline: none;
+      color: #202124;
+    }
+
+    .equals {
+      text-align: center;
+      font-size: 24px;
+      color: #5f6368;
+    }
+
+    .formula {
+      margin-top: 18px;
+      font-size: 13px;
+      color: #5f6368;
+      min-height: 20px;
+    }
+
+    .formula-label {
+      display: inline-block;
+      padding: 3px 6px;
+      margin-right: 5px;
+      background: #f9ab00;
+      color: white;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .converter {
+        padding: 15px 12px 20px;
+      }
+
+      .category-select {
+        width: 100%;
+      }
+
+      .conversion-row {
+        grid-template-columns: 1fr 24px 1fr;
+      }
+
+      .value-input {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="converter">
+
+  <select id="category" class="category-select">
+    <option value="length">길이</option>
+    <option value="area">넓이</option>
+    <option value="volume">부피</option>
+    <option value="mass">질량</option>
+    <option value="temperature">온도</option>
+    <option value="time">시간</option>
+    <option value="speed">속도</option>
+    <option value="pressure">압력</option>
+    <option value="energy">에너지</option>
+    <option value="data">데이터</option>
+  </select>
+
+  <div class="conversion-row">
+
+    <div class="unit-box">
+      <input
+        id="inputValue"
+        class="value-input"
+        type="number"
+        value="1"
+        step="any"
+      >
+
+      <select id="fromUnit" class="unit-select"></select>
+    </div>
+
+    <div class="equals">=</div>
+
+    <div class="unit-box">
+      <input
+        id="outputValue"
+        class="value-input"
+        type="text"
+        readonly
+      >
+
+      <select id="toUnit" class="unit-select"></select>
+    </div>
+
+  </div>
+
+  <div id="formula" class="formula"></div>
+
+</div>
+
+
+<script>
+
+const unitData = {
+
+  length: {
+    name: "길이",
+    units: {
+      kilometer: { name: "킬로미터", factor: 1000 },
+      meter: { name: "미터", factor: 1 },
+      centimeter: { name: "센티미터", factor: 0.01 },
+      millimeter: { name: "밀리미터", factor: 0.001 },
+      micrometer: { name: "마이크로미터", factor: 0.000001 },
+      nanometer: { name: "나노미터", factor: 0.000000001 },
+      mile: { name: "마일", factor: 1609.344 },
+      yard: { name: "야드", factor: 0.9144 },
+      foot: { name: "피트", factor: 0.3048 },
+      inch: { name: "인치", factor: 0.0254 },
+      nauticalMile: { name: "해리", factor: 1852 }
+    },
+    defaultFrom: "meter",
+    defaultTo: "centimeter"
+  },
+
+  area: {
+    name: "넓이",
+    units: {
+      squareKilometer: { name: "제곱킬로미터", factor: 1000000 },
+      squareMeter: { name: "제곱미터", factor: 1 },
+      squareCentimeter: { name: "제곱센티미터", factor: 0.0001 },
+      squareMillimeter: { name: "제곱밀리미터", factor: 0.000001 },
+      hectare: { name: "헥타르", factor: 10000 },
+      acre: { name: "에이커", factor: 4046.8564224 },
+      squareMile: { name: "제곱마일", factor: 2589988.110336 },
+      squareYard: { name: "제곱야드", factor: 0.83612736 },
+      squareFoot: { name: "제곱피트", factor: 0.09290304 },
+      squareInch: { name: "제곱인치", factor: 0.00064516 },
+      pyeong: { name: "평", factor: 3.305785 }
+    },
+    defaultFrom: "squareMeter",
+    defaultTo: "pyeong"
+  },
+
+  volume: {
+    name: "부피",
+    units: {
+      cubicMeter: { name: "세제곱미터", factor: 1 },
+      liter: { name: "리터", factor: 0.001 },
+      milliliter: { name: "밀리리터", factor: 0.000001 },
+      cubicCentimeter: { name: "세제곱센티미터", factor: 0.000001 },
+      cubicMillimeter: { name: "세제곱밀리미터", factor: 0.000000001 },
+      gallonUS: { name: "미국 갤런", factor: 0.003785411784 },
+      quartUS: { name: "미국 쿼트", factor: 0.000946352946 },
+      pintUS: { name: "미국 파인트", factor: 0.000473176473 },
+      cupUS: { name: "미국 컵", factor: 0.0002365882365 },
+      fluidOunceUS: { name: "미국 액량 온스", factor: 0.0000295735295625 }
+    },
+    defaultFrom: "liter",
+    defaultTo: "milliliter"
+  },
+
+  mass: {
+    name: "질량",
+    units: {
+      tonne: { name: "톤", factor: 1000 },
+      kilogram: { name: "킬로그램", factor: 1 },
+      gram: { name: "그램", factor: 0.001 },
+      milligram: { name: "밀리그램", factor: 0.000001 },
+      microgram: { name: "마이크로그램", factor: 0.000000001 },
+      pound: { name: "파운드", factor: 0.45359237 },
+      ounce: { name: "온스", factor: 0.028349523125 }
+    },
+    defaultFrom: "kilogram",
+    defaultTo: "gram"
+  },
+
+  temperature: {
+    name: "온도",
+    special: true,
+    units: {
+      celsius: { name: "섭씨" },
+      fahrenheit: { name: "화씨" },
+      kelvin: { name: "켈빈" }
+    },
+    defaultFrom: "celsius",
+    defaultTo: "fahrenheit"
+  },
+
+  time: {
+    name: "시간",
+    units: {
+      year: { name: "년", factor: 31536000 },
+      month: { name: "개월", factor: 2628000 },
+      week: { name: "주", factor: 604800 },
+      day: { name: "일", factor: 86400 },
+      hour: { name: "시간", factor: 3600 },
+      minute: { name: "분", factor: 60 },
+      second: { name: "초", factor: 1 },
+      millisecond: { name: "밀리초", factor: 0.001 }
+    },
+    defaultFrom: "hour",
+    defaultTo: "minute"
+  },
+
+  speed: {
+    name: "속도",
+    units: {
+      meterPerSecond: { name: "미터/초", factor: 1 },
+      kilometerPerHour: { name: "킬로미터/시", factor: 0.2777777778 },
+      milePerHour: { name: "마일/시", factor: 0.44704 },
+      knot: { name: "노트", factor: 0.5144444444 },
+      footPerSecond: { name: "피트/초", factor: 0.3048 }
+    },
+    defaultFrom: "kilometerPerHour",
+    defaultTo: "meterPerSecond"
+  },
+
+  pressure: {
+    name: "압력",
+    units: {
+      pascal: { name: "파스칼", factor: 1 },
+      kilopascal: { name: "킬로파스칼", factor: 1000 },
+      megapascal: { name: "메가파스칼", factor: 1000000 },
+      bar: { name: "바", factor: 100000 },
+      atmosphere: { name: "기압", factor: 101325 },
+      psi: { name: "PSI", factor: 6894.757293 }
+    },
+    defaultFrom: "bar",
+    defaultTo: "pascal"
+  },
+
+  energy: {
+    name: "에너지",
+    units: {
+      joule: { name: "줄", factor: 1 },
+      kilojoule: { name: "킬로줄", factor: 1000 },
+      calorie: { name: "칼로리", factor: 4.184 },
+      kilocalorie: { name: "킬로칼로리", factor: 4184 },
+      wattHour: { name: "와트시", factor: 3600 },
+      kilowattHour: { name: "킬로와트시", factor: 3600000 }
+    },
+    defaultFrom: "kilojoule",
+    defaultTo: "joule"
+  },
+
+  data: {
+    name: "데이터",
+    units: {
+      bit: { name: "비트", factor: 0.125 },
+      byte: { name: "바이트", factor: 1 },
+      kilobyte: { name: "킬로바이트", factor: 1000 },
+      megabyte: { name: "메가바이트", factor: 1000000 },
+      gigabyte: { name: "기가바이트", factor: 1000000000 },
+      terabyte: { name: "테라바이트", factor: 1000000000000 },
+      kibibyte: { name: "키비바이트", factor: 1024 },
+      mebibyte: { name: "메비바이트", factor: 1048576 },
+      gibibyte: { name: "기비바이트", factor: 1073741824 }
+    },
+    defaultFrom: "megabyte",
+    defaultTo: "gigabyte"
+  }
+
+};
+
+
+const categorySelect = document.getElementById("category");
+const fromUnitSelect = document.getElementById("fromUnit");
+const toUnitSelect = document.getElementById("toUnit");
+
+const inputValue = document.getElementById("inputValue");
+const outputValue = document.getElementById("outputValue");
+
+const formulaText = document.getElementById("formula");
+
+
+function loadUnits() {
+
+  const category = categorySelect.value;
+  const data = unitData[category];
+
+  fromUnitSelect.innerHTML = "";
+  toUnitSelect.innerHTML = "";
+
+  Object.entries(data.units).forEach(([key, unit]) => {
+
+    const option1 = document.createElement("option");
+    option1.value = key;
+    option1.textContent = unit.name;
+
+    const option2 = document.createElement("option");
+    option2.value = key;
+    option2.textContent = unit.name;
+
+    fromUnitSelect.appendChild(option1);
+    toUnitSelect.appendChild(option2);
+
+  });
+
+  fromUnitSelect.value = data.defaultFrom;
+  toUnitSelect.value = data.defaultTo;
+
+  inputValue.value = 1;
+
+  convert();
+}
+
+
+function convertTemperature(value, from, to) {
+
+  let celsius;
+
+  if (from === "celsius") {
+    celsius = value;
+  }
+
+  else if (from === "fahrenheit") {
+    celsius = (value - 32) * 5 / 9;
+  }
+
+  else if (from === "kelvin") {
+    celsius = value - 273.15;
+  }
+
+
+  if (to === "celsius") {
+    return celsius;
+  }
+
+  else if (to === "fahrenheit") {
+    return celsius * 9 / 5 + 32;
+  }
+
+  else if (to === "kelvin") {
+    return celsius + 273.15;
+  }
+
+}
+
+
+function formatNumber(number) {
+
+  if (!Number.isFinite(number)) {
+    return "";
+  }
+
+  const abs = Math.abs(number);
+
+  if (abs !== 0 && (abs >= 1e12 || abs < 1e-6)) {
+    return number.toExponential(6);
+  }
+
+  return Number(
+    number.toPrecision(12)
+  ).toLocaleString("ko-KR", {
+    maximumFractionDigits: 10
+  });
+
+}
+
+
+function convert() {
+
+  const category = categorySelect.value;
+  const data = unitData[category];
+
+  const value = parseFloat(inputValue.value);
+
+  if (isNaN(value)) {
+    outputValue.value = "";
+    formulaText.innerHTML = "";
+    return;
+  }
+
+  const from = fromUnitSelect.value;
+  const to = toUnitSelect.value;
+
+  let result;
+
+
+  if (data.special && category === "temperature") {
+
+    result = convertTemperature(value, from, to);
+
+    formulaText.innerHTML =
+      `<span class="formula-label">공식</span>
+       온도 단위에 따라 변환 공식을 적용합니다.`;
+
+  }
+
+  else {
+
+    const fromFactor = data.units[from].factor;
+    const toFactor = data.units[to].factor;
+
+    result = value * fromFactor / toFactor;
+
+    const ratio = fromFactor / toFactor;
+
+    formulaText.innerHTML =
+      `<span class="formula-label">공식</span>
+       ${data.units[from].name} × ${formatNumber(ratio)} = ${data.units[to].name}`;
+
+  }
+
+  outputValue.value = formatNumber(result);
+
+}
+
+
+categorySelect.addEventListener("change", loadUnits);
+
+inputValue.addEventListener("input", convert);
+
+fromUnitSelect.addEventListener("change", convert);
+
+toUnitSelect.addEventListener("change", convert);
+
+
+loadUnits();
+
+</script>
+
+</body>
+</html>
