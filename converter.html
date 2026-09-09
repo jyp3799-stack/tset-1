@@ -8,14 +8,50 @@
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      padding: 40px 20px;
       font-family: Arial, "Noto Sans KR", sans-serif;
       background: #ffffff;
       color: #202124;
+      padding: 30px 20px;
+    }
+
+    /* 상단 메뉴 */
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 35px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: #202124;
+      border: 1px solid #dadce0;
+      background: #f8f9fa;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    .nav a:hover {
+      background: #eeeeee;
+    }
+
+    .nav a.active {
+      background: #1a73e8;
+      color: white;
+      border-color: #1a73e8;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 38px;
     }
 
     .converter {
@@ -24,8 +60,9 @@
       margin: 0 auto;
       border: 1px solid #dadce0;
       border-radius: 10px;
-      padding: 18px 16px 22px;
+      padding: 20px;
       background: white;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
     }
 
     .category-select {
@@ -36,50 +73,44 @@
       border: 1px solid #dadce0;
       background: #f8f9fa;
       color: #202124;
-      outline: none;
       margin-bottom: 20px;
     }
 
     .conversion-row {
       display: grid;
-      grid-template-columns: 1fr 28px 1fr;
+      grid-template-columns: 1fr 35px 1fr;
       align-items: center;
-      gap: 0;
     }
 
     .unit-box {
       border: 1px solid #dadce0;
-      border-radius: 3px;
+      border-radius: 4px;
       overflow: hidden;
-      background: white;
     }
 
     .value-input {
       width: 100%;
-      height: 58px;
+      height: 60px;
       border: none;
       outline: none;
       text-align: center;
       font-size: 25px;
-      color: #000;
-      background: #fff;
+      background: white;
     }
 
     .unit-select {
       width: 100%;
-      height: 36px;
+      height: 38px;
       border: none;
       border-top: 1px solid #dadce0;
-      padding: 0 7px;
-      font-size: 14px;
       background: #f1f3f4;
-      outline: none;
-      color: #202124;
+      padding: 0 8px;
+      font-size: 14px;
     }
 
     .equals {
       text-align: center;
-      font-size: 24px;
+      font-size: 25px;
       color: #5f6368;
     }
 
@@ -101,12 +132,14 @@
     }
 
     @media (max-width: 600px) {
-      body {
-        padding: 20px 10px;
+      .nav {
+        flex-direction: column;
+        align-items: center;
       }
 
-      .converter {
-        padding: 15px 12px 20px;
+      .nav a {
+        width: 220px;
+        text-align: center;
       }
 
       .category-select {
@@ -114,11 +147,15 @@
       }
 
       .conversion-row {
-        grid-template-columns: 1fr 24px 1fr;
+        grid-template-columns: 1fr 25px 1fr;
+      }
+
+      h1 {
+        font-size: 30px;
       }
 
       .value-input {
-        font-size: 21px;
+        font-size: 20px;
       }
     }
   </style>
@@ -126,53 +163,60 @@
 
 <body>
 
-<div class="converter">
-
-  <select id="category" class="category-select">
-    <option value="length">길이</option>
-    <option value="area">넓이</option>
-    <option value="volume">부피</option>
-    <option value="mass">질량</option>
-    <option value="temperature">온도</option>
-    <option value="time">시간</option>
-    <option value="speed">속도</option>
-    <option value="pressure">압력</option>
-    <option value="energy">에너지</option>
-    <option value="data">데이터</option>
-  </select>
-
-  <div class="conversion-row">
-
-    <div class="unit-box">
-      <input
-        id="inputValue"
-        class="value-input"
-        type="number"
-        value="1"
-        step="any"
-      >
-
-      <select id="fromUnit" class="unit-select"></select>
-    </div>
-
-    <div class="equals">=</div>
-
-    <div class="unit-box">
-      <input
-        id="outputValue"
-        class="value-input"
-        type="text"
-        readonly
-      >
-
-      <select id="toUnit" class="unit-select"></select>
-    </div>
-
+  <!-- 상단 페이지 이동 메뉴 -->
+  <div class="nav">
+    <a href="index.html">세계 시계</a>
+    <a href="converter.html" class="active">단위 변환기</a>
   </div>
 
-  <div id="formula" class="formula"></div>
+  <h1>단위 변환기</h1>
 
-</div>
+  <div class="converter">
+
+    <select id="category" class="category-select">
+      <option value="length">길이</option>
+      <option value="area">넓이</option>
+      <option value="volume">부피</option>
+      <option value="mass">질량</option>
+      <option value="temperature">온도</option>
+      <option value="time">시간</option>
+      <option value="speed">속도</option>
+      <option value="pressure">압력</option>
+      <option value="energy">에너지</option>
+    </select>
+
+    <div class="conversion-row">
+
+      <div class="unit-box">
+        <input
+          id="inputValue"
+          class="value-input"
+          type="number"
+          value="1"
+          step="any"
+        >
+
+        <select id="fromUnit" class="unit-select"></select>
+      </div>
+
+      <div class="equals">=</div>
+
+      <div class="unit-box">
+        <input
+          id="outputValue"
+          class="value-input"
+          type="text"
+          readonly
+        >
+
+        <select id="toUnit" class="unit-select"></select>
+      </div>
+
+    </div>
+
+    <div id="formula" class="formula"></div>
+
+  </div>
 
 
 <script>
@@ -180,7 +224,6 @@
 const unitData = {
 
   length: {
-    name: "길이",
     units: {
       kilometer: { name: "킬로미터", factor: 1000 },
       meter: { name: "미터", factor: 1 },
@@ -191,26 +234,19 @@ const unitData = {
       mile: { name: "마일", factor: 1609.344 },
       yard: { name: "야드", factor: 0.9144 },
       foot: { name: "피트", factor: 0.3048 },
-      inch: { name: "인치", factor: 0.0254 },
-      nauticalMile: { name: "해리", factor: 1852 }
+      inch: { name: "인치", factor: 0.0254 }
     },
     defaultFrom: "meter",
     defaultTo: "centimeter"
   },
 
   area: {
-    name: "넓이",
     units: {
       squareKilometer: { name: "제곱킬로미터", factor: 1000000 },
       squareMeter: { name: "제곱미터", factor: 1 },
       squareCentimeter: { name: "제곱센티미터", factor: 0.0001 },
-      squareMillimeter: { name: "제곱밀리미터", factor: 0.000001 },
       hectare: { name: "헥타르", factor: 10000 },
       acre: { name: "에이커", factor: 4046.8564224 },
-      squareMile: { name: "제곱마일", factor: 2589988.110336 },
-      squareYard: { name: "제곱야드", factor: 0.83612736 },
-      squareFoot: { name: "제곱피트", factor: 0.09290304 },
-      squareInch: { name: "제곱인치", factor: 0.00064516 },
       pyeong: { name: "평", factor: 3.305785 }
     },
     defaultFrom: "squareMeter",
@@ -218,31 +254,23 @@ const unitData = {
   },
 
   volume: {
-    name: "부피",
     units: {
       cubicMeter: { name: "세제곱미터", factor: 1 },
       liter: { name: "리터", factor: 0.001 },
       milliliter: { name: "밀리리터", factor: 0.000001 },
       cubicCentimeter: { name: "세제곱센티미터", factor: 0.000001 },
-      cubicMillimeter: { name: "세제곱밀리미터", factor: 0.000000001 },
-      gallonUS: { name: "미국 갤런", factor: 0.003785411784 },
-      quartUS: { name: "미국 쿼트", factor: 0.000946352946 },
-      pintUS: { name: "미국 파인트", factor: 0.000473176473 },
-      cupUS: { name: "미국 컵", factor: 0.0002365882365 },
-      fluidOunceUS: { name: "미국 액량 온스", factor: 0.0000295735295625 }
+      gallon: { name: "미국 갤런", factor: 0.003785411784 }
     },
     defaultFrom: "liter",
     defaultTo: "milliliter"
   },
 
   mass: {
-    name: "질량",
     units: {
       tonne: { name: "톤", factor: 1000 },
       kilogram: { name: "킬로그램", factor: 1 },
       gram: { name: "그램", factor: 0.001 },
       milligram: { name: "밀리그램", factor: 0.000001 },
-      microgram: { name: "마이크로그램", factor: 0.000000001 },
       pound: { name: "파운드", factor: 0.45359237 },
       ounce: { name: "온스", factor: 0.028349523125 }
     },
@@ -251,7 +279,6 @@ const unitData = {
   },
 
   temperature: {
-    name: "온도",
     special: true,
     units: {
       celsius: { name: "섭씨" },
@@ -263,11 +290,7 @@ const unitData = {
   },
 
   time: {
-    name: "시간",
     units: {
-      year: { name: "년", factor: 31536000 },
-      month: { name: "개월", factor: 2628000 },
-      week: { name: "주", factor: 604800 },
       day: { name: "일", factor: 86400 },
       hour: { name: "시간", factor: 3600 },
       minute: { name: "분", factor: 60 },
@@ -279,20 +302,17 @@ const unitData = {
   },
 
   speed: {
-    name: "속도",
     units: {
       meterPerSecond: { name: "미터/초", factor: 1 },
       kilometerPerHour: { name: "킬로미터/시", factor: 0.2777777778 },
       milePerHour: { name: "마일/시", factor: 0.44704 },
-      knot: { name: "노트", factor: 0.5144444444 },
-      footPerSecond: { name: "피트/초", factor: 0.3048 }
+      knot: { name: "노트", factor: 0.5144444444 }
     },
     defaultFrom: "kilometerPerHour",
     defaultTo: "meterPerSecond"
   },
 
   pressure: {
-    name: "압력",
     units: {
       pascal: { name: "파스칼", factor: 1 },
       kilopascal: { name: "킬로파스칼", factor: 1000 },
@@ -306,7 +326,6 @@ const unitData = {
   },
 
   energy: {
-    name: "에너지",
     units: {
       joule: { name: "줄", factor: 1 },
       kilojoule: { name: "킬로줄", factor: 1000 },
@@ -317,45 +336,26 @@ const unitData = {
     },
     defaultFrom: "kilojoule",
     defaultTo: "joule"
-  },
-
-  data: {
-    name: "데이터",
-    units: {
-      bit: { name: "비트", factor: 0.125 },
-      byte: { name: "바이트", factor: 1 },
-      kilobyte: { name: "킬로바이트", factor: 1000 },
-      megabyte: { name: "메가바이트", factor: 1000000 },
-      gigabyte: { name: "기가바이트", factor: 1000000000 },
-      terabyte: { name: "테라바이트", factor: 1000000000000 },
-      kibibyte: { name: "키비바이트", factor: 1024 },
-      mebibyte: { name: "메비바이트", factor: 1048576 },
-      gibibyte: { name: "기비바이트", factor: 1073741824 }
-    },
-    defaultFrom: "megabyte",
-    defaultTo: "gigabyte"
   }
 
 };
 
 
-const categorySelect = document.getElementById("category");
-const fromUnitSelect = document.getElementById("fromUnit");
-const toUnitSelect = document.getElementById("toUnit");
+const category = document.getElementById("category");
+const fromUnit = document.getElementById("fromUnit");
+const toUnit = document.getElementById("toUnit");
 
 const inputValue = document.getElementById("inputValue");
 const outputValue = document.getElementById("outputValue");
-
-const formulaText = document.getElementById("formula");
+const formula = document.getElementById("formula");
 
 
 function loadUnits() {
 
-  const category = categorySelect.value;
-  const data = unitData[category];
+  const data = unitData[category.value];
 
-  fromUnitSelect.innerHTML = "";
-  toUnitSelect.innerHTML = "";
+  fromUnit.innerHTML = "";
+  toUnit.innerHTML = "";
 
   Object.entries(data.units).forEach(([key, unit]) => {
 
@@ -367,13 +367,13 @@ function loadUnits() {
     option2.value = key;
     option2.textContent = unit.name;
 
-    fromUnitSelect.appendChild(option1);
-    toUnitSelect.appendChild(option2);
+    fromUnit.appendChild(option1);
+    toUnit.appendChild(option2);
 
   });
 
-  fromUnitSelect.value = data.defaultFrom;
-  toUnitSelect.value = data.defaultTo;
+  fromUnit.value = data.defaultFrom;
+  toUnit.value = data.defaultTo;
 
   inputValue.value = 1;
 
@@ -385,49 +385,34 @@ function convertTemperature(value, from, to) {
 
   let celsius;
 
-  if (from === "celsius") {
+  if (from === "celsius")
     celsius = value;
-  }
 
-  else if (from === "fahrenheit") {
+  if (from === "fahrenheit")
     celsius = (value - 32) * 5 / 9;
-  }
 
-  else if (from === "kelvin") {
+  if (from === "kelvin")
     celsius = value - 273.15;
-  }
 
 
-  if (to === "celsius") {
+  if (to === "celsius")
     return celsius;
-  }
 
-  else if (to === "fahrenheit") {
+  if (to === "fahrenheit")
     return celsius * 9 / 5 + 32;
-  }
 
-  else if (to === "kelvin") {
+  if (to === "kelvin")
     return celsius + 273.15;
-  }
 
 }
 
 
 function formatNumber(number) {
 
-  if (!Number.isFinite(number)) {
+  if (!Number.isFinite(number))
     return "";
-  }
 
-  const abs = Math.abs(number);
-
-  if (abs !== 0 && (abs >= 1e12 || abs < 1e-6)) {
-    return number.toExponential(6);
-  }
-
-  return Number(
-    number.toPrecision(12)
-  ).toLocaleString("ko-KR", {
+  return Number(number.toPrecision(12)).toLocaleString("ko-KR", {
     maximumFractionDigits: 10
   });
 
@@ -436,45 +421,45 @@ function formatNumber(number) {
 
 function convert() {
 
-  const category = categorySelect.value;
-  const data = unitData[category];
+  const data = unitData[category.value];
 
   const value = parseFloat(inputValue.value);
 
   if (isNaN(value)) {
     outputValue.value = "";
-    formulaText.innerHTML = "";
     return;
   }
-
-  const from = fromUnitSelect.value;
-  const to = toUnitSelect.value;
 
   let result;
 
 
-  if (data.special && category === "temperature") {
+  if (category.value === "temperature") {
 
-    result = convertTemperature(value, from, to);
+    result = convertTemperature(
+      value,
+      fromUnit.value,
+      toUnit.value
+    );
 
-    formulaText.innerHTML =
+    formula.innerHTML =
       `<span class="formula-label">공식</span>
-       온도 단위에 따라 변환 공식을 적용합니다.`;
+      온도 변환 공식을 적용합니다.`;
 
-  }
+  } else {
 
-  else {
+    const fromFactor =
+      data.units[fromUnit.value].factor;
 
-    const fromFactor = data.units[from].factor;
-    const toFactor = data.units[to].factor;
+    const toFactor =
+      data.units[toUnit.value].factor;
 
     result = value * fromFactor / toFactor;
 
     const ratio = fromFactor / toFactor;
 
-    formulaText.innerHTML =
+    formula.innerHTML =
       `<span class="formula-label">공식</span>
-       ${data.units[from].name} × ${formatNumber(ratio)} = ${data.units[to].name}`;
+      × ${formatNumber(ratio)}`;
 
   }
 
@@ -483,14 +468,10 @@ function convert() {
 }
 
 
-categorySelect.addEventListener("change", loadUnits);
-
+category.addEventListener("change", loadUnits);
 inputValue.addEventListener("input", convert);
-
-fromUnitSelect.addEventListener("change", convert);
-
-toUnitSelect.addEventListener("change", convert);
-
+fromUnit.addEventListener("change", convert);
+toUnit.addEventListener("change", convert);
 
 loadUnits();
 
