@@ -1,3 +1,7 @@
+<div class="nav">
+  <a href="index.html">세계 시계</a>
+  <a href="converter.html" class="active">단위 변환기</a>
+</div>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,6 +10,33 @@
   <title>World Clock</title>
 
   <style>
+    .nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #202124;
+  border: 1px solid #dadce0;
+  background: #f8f9fa;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.nav a:hover {
+  background: #eeeeee;
+}
+
+.nav a.active {
+  background: #1a73e8;
+  color: white;
+  border-color: #1a73e8;
+}
     * {
       box-sizing: border-box;
       margin: 0;
